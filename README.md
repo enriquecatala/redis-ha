@@ -26,3 +26,22 @@ sudo chown -R 1001:1001 redis-data/
 ```
 
 
+## Test
+
+```bash
+# connect
+redis-cli -h redis-sentinel -p 26379 -a str0ng_passw0rd
+# get info
+info
+# get masters
+sentinel masters
+```
+
+## add values
+```bash
+texto = u"ñañaña"
+
+hashlib.md5(texto.encode("utf-8"))
+
+hashlib.md5(texto.encode("utf-8")).hexdigest()
+```

@@ -6,8 +6,14 @@ LABEL "Project" "Redis"
 LABEL project="Redis" role="Backend" sku="cpu"
 
 
-RUN apt-get update && apt-get install -y bc dnsutils redis-tools
-RUN pip install redis ipython
+# install redis client
+RUN apt-get update && apt-get install -y bc dnsutils redis-tools vim iputils-ping telnet
+
+# prepare python 
+COPY requirements.txt requirements.txt
+COPY testapp.py testapp.py
+
+RUN pip install -r requirements.txt
 
 # Entrypoint overrided
 ENTRYPOINT ["sleep", "infinity"]
