@@ -1,0 +1,71 @@
+version: '2'
+
+services:
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=str0ng_passw0rd
+    networks:
+      redis-network:
+          aliases:
+            - redis
+    hostname: redis
+    volumes:
+      - ./redis-data/redis/data:/bitnami/redis/data
+      - ./redis-data/redis/conf:/bitnami/redis/conf
+    ports:
+      - '6379'
+  redis-slave:
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
+      - REDIS_PASSWORD=str0ng_passw0rd
+    ports:
+      - '6379'
+    depends_on:
+      - redis
+    networks:
+      redis-network:
+          aliases:
+            - redis-slave
+    hostname: redis-slave
+    volumes:
+      - ./redis-data/redis-slave/data:/bitnami/redis/data
+      - ./redis-data/redis-slave/conf:/bitnami/redis/conf
+
+  redis-sentinel:
+    image: 'bitnami/redis-sentinel:latest'
+    environment:
+      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
+      - REDIS_SENTINEL_PASSWORD=str0ng_passw0rd
+    depends_on:
+      - redis
+      - redis-slave
+    ports:
+      - '26379-26381:26379'
+    networks:
+      redis-network:
+          aliases:
+            - redis-sentinel
+    hostname: redis-sentinel
+    volumes:
+      - ./redis-data/redis-sentinel/data:/bitnami/redis-sentinel/data
+      - ./redis-data/redis-sentinel/conf:/bitnami/redis-sentinel/conf
+
+  # this is just for testing. 
+  console:
+    build: 
+      context: .
+      dockerfile: Dockerfile.console    
+    networks:
+      redis-network:
+          aliases:
+            - console
+    hostname: console    
+
+networks:
+  redis-network:
+    name: redis-network

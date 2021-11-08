@@ -1,0 +1,13 @@
+FROM python:3.9-slim-bullseye
+
+
+LABEL  "MAINTAINER" "Enrique Catalá Bañuls <enrique@enriquecatala.com>"
+LABEL "Project" "Redis"
+LABEL project="Redis" role="Backend" sku="cpu"
+
+
+RUN apt-get update && apt-get install -y bc dnsutils redis-tools
+RUN pip install redis ipython
+
+# Entrypoint overrided
+ENTRYPOINT ["sleep", "infinity"]
