@@ -17,28 +17,41 @@ mkdir redis-data/redis/conf
 mkdir redis-data/redis-slave
 mkdir redis-data/redis-slave/data
 mkdir redis-data/redis-slave/conf
-mkdir redis-data/redis-sentinel
-mkdir redis-data/redis-sentinel/data
-mkdir redis-data/redis-sentinel/conf
 
-# setup permissions on the redis-data 
-sudo chown -R 1001:1001 redis-data/
+# setup permissions on the data 
+sudo chown -R 1001:1001 data/
 ```
-
-
-## Test
+# Test
 
 ```bash
-# connect
+docker compose up 
+```
+## Docker call
+
+```bash
+docker exec -it docker-console-1  python testsentinel.py 
+```
+
+## Redis client
+
+From the redis client:
+
+```bash
+#install 
+sudo apt install redis-client
+
+# connect to redis node
 redis-cli -h redis-sentinel -p 26379 -a str0ng_passw0rd
 # get info
 info
 # get masters
 sentinel masters
+sentinel master mymaster
 ```
 
 ## add values
 ```bash
+import hashlib
 texto = u"ñañaña"
 
 hashlib.md5(texto.encode("utf-8"))

@@ -15,7 +15,7 @@ services:
       - ./redis-data/redis/data:/bitnami/redis/data
       - ./redis-data/redis/conf:/bitnami/redis/conf
     ports:
-      - '6379'
+      - '6379:6379'
   redis-slave:
     image: 'bitnami/redis:latest'
     environment:
@@ -24,7 +24,7 @@ services:
       - REDIS_MASTER_PASSWORD=str0ng_passw0rd
       - REDIS_PASSWORD=str0ng_passw0rd
     ports:
-      - '6379'
+      - '6380:6379'
     depends_on:
       - redis
     networks:
@@ -41,21 +41,58 @@ services:
     environment:
       - REDIS_MASTER_HOST=redis
       - REDIS_MASTER_PASSWORD=str0ng_passw0rd
-      - REDIS_SENTINEL_PASSWORD=str0ng_passw0rd
+      - REDIS_SENTINEL_PASSWORD=str0ng_passw0rd     
+      - REDIS_SENTINEL_QUORUM=1 
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=3000
     depends_on:
       - redis
       - redis-slave
     ports:
-      - '26379-26381:26379'
+      - '26379:26379'
     networks:
       redis-network:
           aliases:
             - redis-sentinel
     hostname: redis-sentinel
-    volumes:
-      - ./redis-data/redis-sentinel/data:/bitnami/redis-sentinel/data
-      - ./redis-data/redis-sentinel/conf:/bitnami/redis-sentinel/conf
 
+  redis-sentinel2:
+    image: 'bitnami/redis-sentinel:latest'
+    environment:
+      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
+      - REDIS_SENTINEL_PASSWORD=str0ng_passw0rd     
+      - REDIS_SENTINEL_QUORUM=1 
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=3000
+    depends_on:
+      - redis
+      - redis-slave
+    ports:
+      - '26380:26379'
+    networks:
+      redis-network:
+          aliases:
+            - redis-sentinel2
+    hostname: redis-sentinel2
+
+  redis-sentinel3:
+    image: 'bitnami/redis-sentinel:latest'
+    environment:
+      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
+      - REDIS_SENTINEL_PASSWORD=str0ng_passw0rd     
+      - REDIS_SENTINEL_QUORUM=1 
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=3000
+    depends_on:
+      - redis
+      - redis-slave
+    ports:
+      - '26381:26379'
+    networks:
+      redis-network:
+          aliases:
+            - redis-sentinel3
+    hostname: redis-sentinel3
+  
   # this is just for testing. 
   console:
     build: 
