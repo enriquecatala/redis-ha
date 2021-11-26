@@ -65,6 +65,16 @@ redis-cli -h redis-sentinel -p 6379 -a str0ng_passw0rd
 ```bash
 # get databases
 info keyspace
+
+# list all keys
+keys *
+
+# list keys with pattern
+keys *pattern*
+
+# clean database0
+select 0
+flushdb
 ```
 
 ## Mass insert

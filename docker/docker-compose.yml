@@ -93,16 +93,16 @@ services:
             - redis-sentinel3
     hostname: redis-sentinel3
   
-  # this is just for testing. 
-  console:
-    build: 
-      context: ./console
-      dockerfile: Dockerfile.console    
-    networks:
-      redis-network:
-          aliases:
-            - console
-    hostname: console    
+  # this is just for testing (if you have redis-cli installed this is not required)
+  # console:
+  #   build: 
+  #     context: ./console
+  #     dockerfile: Dockerfile.console    
+  #   networks:
+  #     redis-network:
+  #         aliases:
+  #           - console
+  #   hostname: console    
 
 networks:
   redis-network:

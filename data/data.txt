@@ -1,0 +1,3 @@
+SET Key0 Value0
+SET Key1 Value1
+SET Key2 Value2x
