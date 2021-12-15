@@ -117,14 +117,14 @@ auth:
   ## @param auth.existingSecret The name of an existing secret with Redis&trade; credentials
   ## NOTE: When it's set, the previous `auth.password` parameter is ignored
   ##
-  existingSecret: ""
+  existingSecret: "my-redis-secret"
   ## @param auth.existingSecretPasswordKey Password key to be retrieved from existing secret
   ## NOTE: ignored unless `auth.existingSecret` parameter is set
   ##
-  existingSecretPasswordKey: ""
+  existingSecretPasswordKey: "redis-password"
   ## @param auth.usePasswordFiles Mount credentials as files instead of using an environment variable
   ##
-  usePasswordFiles: false
+  usePasswordFiles: true
 ## @param commonConfiguration [string] Common configuration to be added into the ConfigMap
 ## ref: https://redis.io/topics/config
 ##
@@ -314,7 +314,16 @@ master:
   ## @param master.tolerations Tolerations for Redis&trade; master pods assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
-  tolerations: []
+  tolerations: 
+    - key: app
+      operator: "Equal"
+      value: redis
+      effect: "NoSchedule"
+      # kubernetes.azure.com/scalesetpriority=spot:NoSchedule
+    - key: kubernetes.azure.com/scalesetpriority
+      operator: "Equal"
+      value: spot
+      effect: "NoSchedule"
   ## @param master.spreadConstraints Spread Constraints for Redis&trade; master pod assignment
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   ## E.g.
@@ -628,7 +637,16 @@ replica:
   ## @param replica.tolerations Tolerations for Redis&trade; replicas pods assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
-  tolerations: []
+  tolerations: 
+    - key: app
+      operator: "Equal"
+      value: redis
+      effect: "NoSchedule"
+      # kubernetes.azure.com/scalesetpriority=spot:NoSchedule
+    - key: kubernetes.azure.com/scalesetpriority
+      operator: "Equal"
+      value: spot
+      effect: "NoSchedule"
   ## @param replica.spreadConstraints Spread Constraints for Redis&trade; replicas pod assignment
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   ## E.g.
@@ -776,7 +794,7 @@ sentinel:
   ## IMPORTANT: this will disable the master and replicas services and
   ## create a single Redis&trade; service exposing both the Redis and Sentinel ports
   ##
-  enabled: false
+  enabled: true
   ## Bitnami Redis&trade; Sentinel image version
   ## ref: https://hub.docker.com/r/bitnami/redis-sentinel/tags/
   ## @param sentinel.image.registry Redis&trade; Sentinel image registry
