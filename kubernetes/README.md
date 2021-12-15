@@ -1,5 +1,7 @@
 # Redis
 
+This document will help you to deploy redis in AKS on a sentinel-master-slave architecture with spot instances and dedicated nodepool.
+
 For complete documentation: https://github.com/bitnami/charts/tree/master/bitnami/redis
 
 ```bash
