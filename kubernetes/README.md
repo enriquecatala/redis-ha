@@ -28,6 +28,30 @@ kubectl create secret generic my-redis-secret --from-literal=redis-password=some
 
 # Deployment
 
+## Add AKS nodepool
+
+```bash
+## delete old nodepool (optional)
+#
+# az aks nodepool delete --cluster-name sentinelaksdemo \
+#                       --resource-group ES-ITCO-TECHL-01-IS-ADM-NC-STD-XXX \
+#                       --name redis
+    
+
+## add new nodepool (Spot dedicated to redis)
+#
+az aks nodepool add --cluster-name sentinelaksdemo \
+                    --resource-group ES-ITCO-TECHL-01-IS-ADM-NC-STD-XXX \
+                    --name redis \
+                    --enable-cluster-autoscaler \
+                    --eviction-policy Delete \
+                    --max-count 4 \
+                    --min-count 3 \
+                    --priority Spot \
+                    --node-taints "dedicated=redis:NoSchedule" \
+                    --node-vm-size Standard_E4s_v3	# 32Gb of ram
+```
+
 ## Create namespace and secret
 ```
 kubectl create namespace redis
@@ -43,7 +67,18 @@ kubectl create secret generic my-redis-secret \
 helm repo add bitnami https://charts.bitnami.com/bitnami
 ```
 
-## Option 1) Deploy redis without tolerations
+## Option 1) Deploy with taints and tolerations (PREFERED)
+
+```
+helm install redis bitnami/redis \
+  -f redis-values-production.yaml \
+  --create-namespace \
+  --namespace redis
+```
+
+>NOTE: For more info: https://github.com/bitnami/charts/tree/master/bitnami/redis
+
+## Option 2) Deploy redis without tolerations and without yaml file
  It takes ~5 minutes to deploy the chart
  By default it deploys with PVC to azure-disk and reclaim-policy=Delete (but helm uninstall redis does NOT delete the PVC, so data will be preserved)
   kubectl get pvc, pv
@@ -59,26 +94,9 @@ helm install redis bitnami/redis \
   --create-namespace \
   --namespace redis
 ```
-
-
-## Option 2) Deploy with taints and tolerations
-
-I was unable to use `--set master.tolerations="[{key: app, operator: Equal, value: redis,effect: NoSchedule}]" \
-  --set replica.tolerations="[{key: app, operator: Equal, value: redis, effect: NoSchedule}]"` 
-
-So I moved to yaml file to configure my redis:
-
-```
-helm install redis bitnami/redis \
-  -f redis-values-production.yaml \
-  --create-namespace \
-  --namespace redis
-```
-
->NOTE: For more info: https://github.com/bitnami/charts/tree/master/bitnami/redis
-
 ## Test
 
+### Option1) Test from container
 ```
 export REDIS_PASSWORD=$(kubectl get secret --namespace redis my-redis-secret -o jsonpath="{.data.redis-password}" | base64 --decode)
 kubectl run redis-client --restart='Never' --rm --env REDISCLI_AUTH=$REDIS_PASSWORD  --image docker.io/bitnami/redis:6.2.6-debian-10-r53  --namespace redis -it  -- /bin/bash 
@@ -86,7 +104,24 @@ kubectl run redis-client --restart='Never' --rm --env REDISCLI_AUTH=$REDIS_PASSW
 # now, inside the container
 REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli -h redis -p 6379 # Read only operations
 REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli -h redis -p 26379 # Sentinel access
+
+# to get the master node (readwrite) FROM SENTINEL
+SENTINEL get-master-addr-by-name mymaster
+
 ```
+### Option2) Test from local machine
+
+``` 
+export REDIS_PASSWORD=$(kubectl get secret --namespace redis my-redis-secret -o jsonpath="{.data.redis-password}" | base64 --decode)
+
+# Open port-forwarding 
+kubectl port-forward --namespace redis svc/redis 6379:6379 
+
+# Load all data
+cat /mnt/d/Clientes/SentinelML/prepared_blacklist_for_redis/part-00000-tid-8877533473703218517-d3e24d59-c5ee-4a52-9c37-9b89a217b070-263-1-c000.csv | redis-cli -h 127.0.0.1 -p 6379 -a somesecretpassword --pipe
+
+```
+
 
 ### Expected output
 
@@ -143,4 +178,13 @@ To connect to your database from outside the cluster execute the following comma
 # Data will NOT be destroyed
 # This will clean pods, services,configmaps...but not secrets
 helm uninstall  redis --namespace redis
+```
+
+#### Delete all data
+
+<mark>THIS WILL DESTROY ALL YOUR DATA</mark> since the PVC is reclaim-policy=Delete
+```
+kubectl -n redis delete pvc redis-data-redis-node-0
+kubectl -n redis delete pvc redis-data-redis-node-1
+kubectl -n redis delete pvc redis-data-redis-node-2
 ```

@@ -315,7 +315,7 @@ master:
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: 
-    - key: app
+    - key: dedicated
       operator: "Equal"
       value: redis
       effect: "NoSchedule"
@@ -638,7 +638,7 @@ replica:
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: 
-    - key: app
+    - key: dedicated
       operator: "Equal"
       value: redis
       effect: "NoSchedule"

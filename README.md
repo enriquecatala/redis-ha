@@ -91,7 +91,8 @@ To mass insert data into redis:
 ```bash
 # use PIPE 
 #cat data/data.txt | redis-cli -h 127.0.0.1 -p 6379 -a str0ng_passw0rd --pipe
-cat data/data.txt | redis-cli -h redis-sentinel -p 6379 -a str0ng_passw0rd --pipe
+# cat data/data.txt | redis-cli -h redis-sentinel -p 6379 -a str0ng_passw0rd --pipe
+cat "D:\Clientes\SentinelML\prepared_blacklist_for_redis\part-00000-tid-8877533473703218517-d3e24d59-c5ee-4a52-9c37-9b89a217b070-263-1-c000.csv" | redis-cli -h 127.0.0.1 -p 6379 -a somesecretpassword --pipe
 ```
 
 >NOTE: For more info https://redis.io/topics/mass-insert
