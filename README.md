@@ -14,5 +14,5 @@
 Example deployment of Redis service in High Availability with docker and kubernetes examples
 
 
-[Docker example](docker/README.md)
-[Kubernetes example](kubernetes/README.md)
+- [Docker example](docker/README.md)
+- [Kubernetes example](kubernetes/README.md)
