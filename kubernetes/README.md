@@ -22,6 +22,9 @@
     - [Expected output](#expected-output)
     - [Uninstall chart](#uninstall-chart)
       - [Delete all data](#delete-all-data)
+
+>AUTHOR: [Enrique Catalá Bañuls](https://www.linkedin.com/in/enriquecatala)
+
 # Redis
 
 This document will help you to deploy redis in AKS on a sentinel-master-slave architecture with spot instances and dedicated nodepool.
@@ -63,15 +66,15 @@ kubectl create secret generic my-redis-secret --from-literal=redis-password=some
 ```bash
 ## delete old nodepool (optional)
 #
-# az aks nodepool delete --cluster-name sentinelaksdemo \
-#                       --resource-group ES-ITCO-TECHL-01-IS-ADM-NC-STD-XXX \
+# az aks nodepool delete --cluster-name your-old-cluster \
+#                       --resource-group YOUR-RESOURCE-GROUP \
 #                       --name redis
     
 
 ## add new nodepool (Spot dedicated to redis)
 #
-az aks nodepool add --cluster-name sentinelaksdemo \
-                    --resource-group ES-ITCO-TECHL-01-IS-ADM-NC-STD-XXX \
+az aks nodepool add --cluster-name YOUR-CLUSTER \
+                    --resource-group YOUR-RESOURCE-GROUP \
                     --name redis \
                     --enable-cluster-autoscaler \
                     --eviction-policy Delete \
@@ -148,7 +151,7 @@ export REDIS_PASSWORD=$(kubectl get secret --namespace redis my-redis-secret -o 
 kubectl port-forward --namespace redis svc/redis 6379:6379 
 
 # Load all data
-cat /mnt/d/Clientes/SentinelML/prepared_blacklist_for_redis/part-00000-tid-8877533473703218517-d3e24d59-c5ee-4a52-9c37-9b89a217b070-263-1-c000.csv | redis-cli -h 127.0.0.1 -p 6379 -a somesecretpassword --pipe
+cat /mnt/d/prepared_blacklist_for_redis/part-00000-tid-8877533473703218517-d3e24d59-c5ee-4a52-9c37-9b89a217b070-263-1-c000.csv | redis-cli -h 127.0.0.1 -p 6379 -a somesecretpassword --pipe
 
 ```
 
