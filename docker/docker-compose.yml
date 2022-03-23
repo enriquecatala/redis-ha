@@ -5,7 +5,7 @@ services:
     image: 'bitnami/redis:latest'
     environment:
       - REDIS_REPLICATION_MODE=master
-      - REDIS_PASSWORD=str0ng_passw0rd
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
       redis-network:
           aliases:
@@ -21,8 +21,8 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=slave
       - REDIS_MASTER_HOST=redis
-      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
-      - REDIS_PASSWORD=str0ng_passw0rd
+      - REDIS_MASTER_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     ports:
       - '6380:6379'
     depends_on:
@@ -40,8 +40,8 @@ services:
     image: 'bitnami/redis-sentinel:latest'
     environment:
       - REDIS_MASTER_HOST=redis
-      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
-      - REDIS_SENTINEL_PASSWORD=str0ng_passw0rd     
+      - REDIS_MASTER_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_SENTINEL_PASSWORD=${REDIS_PASSWORD}     
       - REDIS_SENTINEL_QUORUM=1 
       - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=3000
     depends_on:
@@ -59,8 +59,8 @@ services:
     image: 'bitnami/redis-sentinel:latest'
     environment:
       - REDIS_MASTER_HOST=redis
-      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
-      - REDIS_SENTINEL_PASSWORD=str0ng_passw0rd     
+      - REDIS_MASTER_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_SENTINEL_PASSWORD=${REDIS_PASSWORD}     
       - REDIS_SENTINEL_QUORUM=1 
       - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=3000
     depends_on:
@@ -78,8 +78,8 @@ services:
     image: 'bitnami/redis-sentinel:latest'
     environment:
       - REDIS_MASTER_HOST=redis
-      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
-      - REDIS_SENTINEL_PASSWORD=str0ng_passw0rd     
+      - REDIS_MASTER_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_SENTINEL_PASSWORD=${REDIS_PASSWORD}     
       - REDIS_SENTINEL_QUORUM=1 
       - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=3000
     depends_on:
@@ -94,15 +94,17 @@ services:
     hostname: redis-sentinel3
   
   # this is just for testing (if you have redis-cli installed this is not required)
-  # console:
-  #   build: 
-  #     context: ./console
-  #     dockerfile: Dockerfile.console    
-  #   networks:
-  #     redis-network:
-  #         aliases:
-  #           - console
-  #   hostname: console    
+  console:
+    build: 
+      context: ./console
+      dockerfile: Dockerfile.console    
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      redis-network:
+          aliases:
+            - console
+    hostname: console    
 
 networks:
   redis-network:

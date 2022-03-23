@@ -1,3 +1,27 @@
+<div>
+    <a href="https://github.com/sponsors/enriquecatala"><img src="https://img.shields.io/badge/GitHub_Sponsors--_.svg?style=flat-square&logo=github&logoColor=EA4AAA" alt="GitHub Sponsors"></a>
+    <a href="https://enriquecatala.com"><img src="https://img.shields.io/website?down_color=red&down_message=down&label=enriquecatala.com&up_color=46C018&url=https%3A%2F%2Fenriquecatala.com&style=flat-square" alt="Data Engineering with Enrique Catalá"></a>
+    <a href="https://www.linkedin.com/in/enriquecatala"><img src="https://img.shields.io/badge/LinkedIn--_.svg?style=flat-square&logo=linkedin" alt="LinkedIn Enrique Catalá Bañuls"></a>
+    <a href="https://twitter.com/enriquecatala"><img src="https://img.shields.io/twitter/follow/enriquecatala?color=blue&label=twitter&style=flat-square" alt="Twitter @enriquecatala"></a>
+    <a href="https://youtube.com/enriquecatala"><img src="https://raw.githubusercontent.com/enriquecatala/enriquecatala/master/img/youtube.png" alt="Data Engineering: Canal youtube de Enrique Catalá" height=20></a>
+</div>
+
+<a href="https://mvp.microsoft.com/es-es/PublicProfile/5000312?fullName=Enrique%20Catala"><img src="https://raw.githubusercontent.com/enriquecatala/enriquecatala/master/img/MVP_Logo_horizontal.png" alt="Microsoft DataPlatform MVP Enrique Catalá"></a>
+
+- [Redis](#redis)
+  - [Configurations:](#configurations)
+- [Deployment](#deployment)
+  - [Add AKS nodepool](#add-aks-nodepool)
+  - [Create namespace and secret](#create-namespace-and-secret)
+  - [Deploy helm](#deploy-helm)
+  - [Option 1) Deploy with taints and tolerations (PREFERED)](#option-1-deploy-with-taints-and-tolerations-prefered)
+  - [Option 2) Deploy redis without tolerations and without yaml file](#option-2-deploy-redis-without-tolerations-and-without-yaml-file)
+  - [Test](#test)
+    - [Option1) Test from container](#option1-test-from-container)
+    - [Option2) Test from local machine](#option2-test-from-local-machine)
+    - [Expected output](#expected-output)
+    - [Uninstall chart](#uninstall-chart)
+      - [Delete all data](#delete-all-data)
 # Redis
 
 This document will help you to deploy redis in AKS on a sentinel-master-slave architecture with spot instances and dedicated nodepool.
@@ -19,6 +43,10 @@ For complete documentation: https://github.com/bitnami/charts/tree/master/bitnam
     - existingSecret=redis-password-secret
     - sentinels.enabled=true
     - metrics.enabled=true
+  - appendonly yes
+    - From now on, every time Redis receives a command that changes the dataset (e.g. SET) it will append it to the AOF. When you restart Redis it will re-play the AOF to rebuild the state.
+
+
 
 To create the secret from password:
 
