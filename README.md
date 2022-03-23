@@ -55,6 +55,14 @@ docker exec -it docker-console-1  python testsentinel.py
 
 After executing the last command, if you connect to the redis-master, this is what you should get: 
 
+```bash
+$ docker exec -it docker-console-1  python testsentinel.py 
+Defining sentinel connection...
+Master connection retrieved from sentinel: ('192.168.32.3', 6379)
+1) Setting key 'test_key_from_testsentinel.py' in master: 
+2) Value retrieved from slave: b'test from testsentinel.py success'
+```
+
 ## Redis client
 
 From the redis client:

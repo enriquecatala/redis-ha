@@ -100,6 +100,13 @@ services:
       dockerfile: Dockerfile.console    
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - SENTINEL1=${SENTINEL1}
+      - SENTINEL2=${SENTINEL2}
+      - SENTINEL3=${SENTINEL3}
+      - SENTINEL1_PORT=${SENTINEL1_PORT}
+      - SENTINEL2_PORT=${SENTINEL2_PORT}
+      - SENTINEL3_PORT=${SENTINEL3_PORT}
+      
     networks:
       redis-network:
           aliases:

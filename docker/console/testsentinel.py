@@ -12,9 +12,9 @@ from redis.sentinel import Sentinel
 import os
 
 print("Defining sentinel connection...")
-sentinel = Sentinel([('redis-sentinel', 26379),
-                     ('redis-sentine2', 26380),
-                     ('redis-sentine3', 26381)],
+sentinel = Sentinel([(os.environ.get("SENTINEL1"), os.environ.get("SENTINEL1_PORT")),
+                     (os.environ.get("SENTINEL2"), os.environ.get("SENTINEL2_PORT")),
+                     (os.environ.get("SENTINEL3"), os.environ.get("SENTINEL3_PORT"))],
                      socket_timeout=None,
                      password=os.environ.get("REDIS_PASSWORD"), 
                      sentinel_kwargs={"password": os.environ.get("REDIS_PASSWORD")})
